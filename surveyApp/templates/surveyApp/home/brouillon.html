@@ -1,0 +1,95 @@
+{% extends 'surveyApp/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card bg-white p-4 rounded shadow">  <!-- Fond blanc et ombre -->
+                <h2 class="text-center mb-4 text-dark">Créer un nouveau sondage</h2>  <!-- Titre centré -->
+                <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    {% csrf_token %}
+
+                    <!-- Champ Image -->
+                    <div class="form-group mb-4">
+                        <label for="{{ survey_form.image.id_for_label }}" class="form-label text-dark">Image du sondage</label>
+                        {{ survey_form.image }}
+                        <div class="invalid-feedback">
+                            Veuillez télécharger une image valide.
+                        </div>
+                    </div>
+
+                    <!-- Titre et Description sur la même ligne -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <!-- Champ Titre -->
+                            <div class="form-group mb-4">
+                                <label for="{{ survey_form.title.id_for_label }}" class="form-label text-dark">Titre du sondage</label>
+                                {{ survey_form.title }}
+                                <div class="invalid-feedback">
+                                    Veuillez entrer un titre.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <!-- Champ Description -->
+                            <div class="form-group mb-4">
+                                <label for="{{ survey_form.description.id_for_label }}" class="form-label text-dark">Description du sondage</label>
+                                {{ survey_form.description }}
+                                <div class="invalid-feedback">
+                                    Veuillez entrer une description.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Date de début et Date de fin sur la même ligne -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <!-- Champ Date de début -->
+                            <div class="form-group mb-4">
+                                <label for="{{ survey_form.start_date.id_for_label }}" class="form-label text-dark">Date de début</label>
+                                {{ survey_form.start_date }}
+                                <div class="invalid-feedback">
+                                    Veuillez entrer une date de début valide.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <!-- Champ Date de fin -->
+                            <div class="form-group mb-4">
+                                <label for="{{ survey_form.end_date.id_for_label }}" class="form-label text-dark">Date de fin</label>
+                                {{ survey_form.end_date }}
+                                <div class="invalid-feedback">
+                                    Veuillez entrer une date de fin valide.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bouton de soumission -->
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-lg">Créer le sondage</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script pour la validation Bootstrap -->
+<script>
+    (function () {
+        'use strict';
+        var forms = document.querySelectorAll('.needs-validation');
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+</script>
+{% endblock %}

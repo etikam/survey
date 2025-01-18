@@ -1,0 +1,171 @@
+{% extends 'surveyApp/base.html' %}
+
+{% block hero %}
+{% endblock hero %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center">  <!-- Centrage vertical et horizontal -->
+    <form style="width: 26rem;" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+        {% csrf_token %}
+
+        <!-- Aperçu de l'image -->
+        <div id="image-preview" class="text-center mb-4" style="display: none;">
+            <img id="preview" src="#" alt="Aperçu de l'image" class="img-fluid rounded" style="max-height: 200px;" />
+        </div>
+
+        <!-- Champ Image -->
+        <div data-mdb-input-init class="form-outline mb-4">
+            {{ survey_form.image }}
+            <label class="form-label" for="{{ survey_form.image.id_for_label }}">Image du sondage</label>
+            <div class="invalid-feedback">
+                Veuillez télécharger une image valide.
+            </div>
+        </div>
+
+        <!-- Champ Titre -->
+        <div data-mdb-input-init class="form-outline mb-4">
+            {{ survey_form.title }}
+            <label class="form-label" for="{{ survey_form.title.id_for_label }}">Titre du sondage</label>
+            <div class="invalid-feedback">
+                Veuillez entrer un titre.
+            </div>
+        </div>
+
+        <!-- Champ Description -->
+        <div data-mdb-input-init class="form-outline mb-4">
+            {{ survey_form.description }}
+            <label class="form-label" for="{{ survey_form.description.id_for_label }}">Description du sondage</label>
+            <div class="invalid-feedback">
+                Veuillez entrer une description.
+            </div>
+        </div>
+
+        <!-- Champ Date de début -->
+        <div data-mdb-input-init class="form-outline mb-4">
+            {{ survey_form.start_date }}
+            <label class="form-label" for="{{ survey_form.start_date.id_for_label }}">Date de début</label>
+            <div class="invalid-feedback">
+                Veuillez entrer une date de début valide.
+            </div>
+        </div>
+
+        <!-- Champ Date de fin -->
+        <div data-mdb-input-init class="form-outline mb-4">
+            {{ survey_form.end_date }}
+            <label class="form-label" for="{{ survey_form.end_date.id_for_label }}">Date de fin</label>
+            <div class="invalid-feedback">
+                Veuillez entrer une date de fin valide.
+            </div>
+        </div>
+        <hr class="hr" />
+        <h2>Questions du sondage</h2>
+        <!-- Questions -->
+        <div id="questions-container">
+            <!-- Les questions seront ajoutées dynamiquement ici -->
+        </div>
+
+        <!-- Bouton pour ajouter des questions -->
+        <button type="button" id="add-question-btn" class="btn btn-secondary btn-block mb-4">Ajouter une question</button>
+
+        <!-- Bouton de soumission -->
+        <button data-mdb-ripple-init type="submit" class="btn btn-primary btn-block mb-4">Créer le sondage</button>
+    </form>
+</div>
+
+<!-- Script pour la prévisualisation de l'image -->
+<script>
+    const imageInput = document.querySelector('input[type="file"][name="image"]');
+    const imagePreview = document.getElementById('image-preview');
+    const previewImage = document.getElementById('preview');
+
+    imageInput.addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                previewImage.src = e.target.result;
+                imagePreview.style.display = 'block';  // Affiche l'aperçu
+            };
+            reader.readAsDataURL(file);
+        } else {
+            previewImage.src = '#';
+            imagePreview.style.display = 'none';  // Cache l'aperçu si aucune image n'est sélectionnée
+        }
+    });
+</script>
+
+<!-- Script pour ajouter des questions dynamiquement -->
+<script>
+    const addQuestionBtn = document.getElementById('add-question-btn');
+    const questionsContainer = document.getElementById('questions-container');
+
+    addQuestionBtn.addEventListener('click', function() {
+        const questionIndex = questionsContainer.children.length;
+        
+        // Créer un nouveau bloc de question
+        const questionBlock = document.createElement('div');
+        questionBlock.classList.add('question-block', 'mb-4');
+        
+        // Champ de texte pour la question
+        const questionInput = document.createElement('input');
+        questionInput.type = 'text';
+        questionInput.name = `questions[]`;
+        questionInput.placeholder = 'Entrez la question ici';
+        questionInput.classList.add('form-control');
+        questionInput.required = true;
+        
+        // Type de question (single, multiple ou text)
+        const typeSelect = document.createElement('select');
+        typeSelect.name = `types[]`;
+        typeSelect.classList.add('form-control');
+        const option1 = document.createElement('option');
+        option1.value = 'single';
+        option1.textContent = 'Option unique';
+        const option2 = document.createElement('option');
+        option2.value = 'multiple';
+        option2.textContent = 'Choix multiples';
+        const option3 = document.createElement('option');
+        option3.value = 'text';
+        option3.textContent = 'Réponse texte';
+        typeSelect.append(option1, option2, option3);
+        
+        // Champ de choix (visible uniquement pour "single" ou "multiple")
+        const choicesInput = document.createElement('input');
+        choicesInput.type = 'text';
+        choicesInput.name = `choices[]`;
+        choicesInput.placeholder = 'Choix séparés par des virgules';
+        choicesInput.classList.add('form-control');
+        choicesInput.style.display = 'none'; // Par défaut caché
+
+        // Afficher/masquer le champ de choix en fonction du type sélectionné
+        typeSelect.addEventListener('change', function() {
+            if (typeSelect.value === 'single' || typeSelect.value === 'multiple') {
+                choicesInput.style.display = 'block';
+            } else {
+                choicesInput.style.display = 'none';
+            }
+        });
+
+        // Ajouter les éléments au bloc de question
+        questionBlock.append(questionInput, typeSelect, choicesInput);
+        questionsContainer.appendChild(questionBlock);
+    });
+</script>
+
+<!-- Script pour la validation Bootstrap -->
+<script>
+    (function () {
+        'use strict';
+        var forms = document.querySelectorAll('.needs-validation');
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+</script>
+{% endblock %}
