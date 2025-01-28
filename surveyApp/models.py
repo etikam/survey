@@ -1,6 +1,8 @@
 import uuid
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class Survey(models.Model):
@@ -11,6 +13,9 @@ class Survey(models.Model):
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return self.title
 
 
 class Question(models.Model):
@@ -23,6 +28,9 @@ class Question(models.Model):
     text = models.CharField(max_length=500)
     type = models.CharField(max_length=10, choices=QUESTION_TYPES)
     survey = models.ForeignKey(Survey, on_delete=models.CASCADE)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 
 class Choice(models.Model):

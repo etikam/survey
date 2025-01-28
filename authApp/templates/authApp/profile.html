@@ -1,0 +1,44 @@
+{% extends 'authApp/base.html' %}
+
+{% block title %}Profil{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="text-center">Mon Profil</h2>
+            </div>
+            <div class="card-body">
+                {% if user.profile_picture %}
+                    <div class="text-center mb-3">
+                        <img src="{{ user.profile_picture.url }}" class="rounded-circle" style="max-width: 200px;">
+                    </div>
+                {% endif %}
+                <table class="table">
+                    <tr>
+                        <th>Nom d'utilisateur</th>
+                        <td>{{ user.username }}</td>
+                    </tr>
+                    <tr>
+                        <th>Email</th>
+                        <td>{{ user.email }}</td>
+                    </tr>
+                    <tr>
+                        <th>Téléphone</th>
+                        <td>{{ user.phone_number|default:"Non renseigné" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Compte vérifié</th>
+                        <td>{% if user.is_verified %}Oui{% else %}Non{% endif %}</td>
+                    </tr>
+                </table>
+                <div class="d-grid gap-2">
+                    <a href="#" class="btn btn-primary">Modifier le profil</a>
+                    <a href="#" class="btn btn-danger">Changer de mot de passe</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

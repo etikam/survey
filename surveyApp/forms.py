@@ -4,6 +4,7 @@ from .models import Question
 from .models import Choice
 from .models import Answer
 from django.utils import timezone
+from django.forms import formset_factory
 
 
 class SurveyForm(forms.ModelForm):
@@ -66,8 +67,7 @@ class ChoiceForm(forms.ModelForm):
         fields = ['text']
         widgets = {
             'text': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Texte du choix'}),
-        }
-        
+        }    
 
 
 class AnswerForm(forms.ModelForm):
@@ -93,3 +93,10 @@ class AnswerForm(forms.ModelForm):
                 choices = [(choice.uid, choice.text) for choice in question.choice_set.all()]
                 self.fields[f"question_{question.uid}"] = forms.ChoiceField(
                     label=question.text, choices=choices, widget=forms.RadioSelect, required=True)
+
+
+
+# QuestionFormSet = formset_factory(
+#     Survey, Question, form=QuestionForm, extra=1, can_delete=True, can_delete_extra=True
+# )
+

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Vérification de votre compte</title>
+</head>
+<body>
+    <h1>Bienvenue {{ username }} !</h1>
+    <p>Pour activer votre compte, veuillez cliquer sur le lien ci-dessous :</p>
+    <p><a href="{{ verification_url }}">Vérifier mon compte</a></p>
+    <p>Si le lien ne fonctionne pas, copiez et collez l'URL suivante dans votre navigateur :</p>
+    <p>{{ verification_url }}</p>
+    <p>Ce lien expirera dans 24 heures.</p>
+    <p>Cordialement,<br>L'équipe</p>
+</body>
+</html>

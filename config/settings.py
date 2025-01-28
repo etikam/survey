@@ -15,7 +15,7 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+AUTH_USER_MODEL  = "authApp.CustomUser"
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -37,7 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # ==============
+    'rest_framework',
+    'drf_spectacular',
+    'drf_spectacular_sidecar',  # Add this line
+    'django_filters',
     'surveyApp',
+    'authApp',
 ]
 
 MIDDLEWARE = [
@@ -118,8 +125,41 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# Authentification personnalisée
+AUTH_USER_MODEL = 'authApp.CustomUser'
+AUTHENTICATION_BACKENDS = [
+    'authApp.backends.EmailBackend',  # Notre backend personnalisé
+    'django.contrib.auth.backends.ModelBackend',  # Backend par défaut de Django
+]
+
+# Configuration des emails
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # À remplacer par votre serveur SMTP
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'votre_email@gmail.com'  # À configurer avec des variables d'environnement
+EMAIL_HOST_PASSWORD = 'votre_mot_de_passe'  # À configurer avec des variables d'environnement
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Survey API',
+    'VERSION': '1.0.0',
+    'DESCRIPTION': 'API pour les sondages sur les evenements ou fait',
+    'SWAGGER_UI_DIST': 'SIDECAR',
+    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+    'REDOC_DIST': 'SIDECAR',
+}
